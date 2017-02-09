@@ -123,7 +123,8 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
                             // Create the projection (SQL fields) and sort order.
                             String[] projection = {
                                     ContactsContract.Contacts.Entity.MIMETYPE,
-                                    ContactsContract.Contacts.Entity.DATA1
+                                    ContactsContract.Contacts.Entity.DATA1,
+                                    ContactsContract.Contacts.Entity.PHOTO_THUMBNAIL_URI
                             };
                             String sortOrder = ContactsContract.Contacts.Entity.RAW_CONTACT_ID + " ASC";
                             cursor = mCtx.getContentResolver().query(contactUri, projection, null, null, sortOrder);
