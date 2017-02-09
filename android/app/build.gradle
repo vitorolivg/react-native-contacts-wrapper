@@ -17,6 +17,9 @@ android {
 }
 
 dependencies {
-    compile "com.facebook.react:react-native:+"  // From node_modules
+    // From node_modules
+    compile 'com.facebook.react:react-native:+'
+    compile 'com.android.support:design:23.4.0'
 }
+
 
