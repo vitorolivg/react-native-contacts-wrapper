@@ -1,20 +1,33 @@
+
 package com.lynxit.contactswrapper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
+import java.net.URI;
+import java.util.*;
+
+import com.facebook.react.*;
+
+import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
-
-import java.util.HashMap;
+import com.facebook.react.uimanager.ViewManager;
 
 public class ContactsWrapper extends ReactContextBaseJavaModule implements ActivityEventListener {
 
@@ -39,6 +52,7 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
     }
 
 
+
     @ReactMethod
     public void getContact(Promise contactsPromise) {
         launchPicker(contactsPromise, CONTACT_REQUEST);
@@ -51,9 +65,8 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
 
     /**
      * Lanch the contact picker, with the specified requestCode for returned data.
-     *
      * @param contactsPromise - promise passed in from React Native.
-     * @param requestCode     - request code to specify what contact data to return
+     * @param requestCode - request code to specify what contact data to return
      */
     private void launchPicker(Promise contactsPromise, int requestCode) {
         mContactsPromise = contactsPromise;
@@ -66,9 +79,10 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (mContactsPromise == null || mCtx == null
-                || (requestCode != CONTACT_REQUEST && requestCode != EMAIL_REQUEST)) {
+    public void onActivityResult(Activity ContactsWrapper, final int requestCode, final int resultCode, final Intent intent) {
+
+        if(mContactsPromise == null || mCtx == null
+                || (requestCode != CONTACT_REQUEST && requestCode != EMAIL_REQUEST)){
             return;
         }
 
@@ -76,8 +90,8 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
         switch (resultCode) {
             case (Activity.RESULT_OK):
                 Uri contactUri = intent.getData();
-                switch (requestCode) {
-                    case (CONTACT_REQUEST):
+                switch(requestCode) {
+                    case(CONTACT_REQUEST):
                         try {
                             /* Retrieve all possible data about contact and return as a JS object */
 
@@ -88,7 +102,6 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
                             returnKeys.put(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE, "email");
                             // Requesting contact photo
                             returnKeys.put(ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, "photo");
-
                             //First get ID
                             String id = null;
                             int idx;
@@ -122,14 +135,14 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
                             if (cursor.moveToFirst()) {
                                 do {
                                     mime = cursor.getString(mimeIdx);
-                                    if (returnKeys.containsKey(mime)) {
+                                    if(returnKeys.containsKey(mime)) {
                                         contactData.putString((String) returnKeys.get(mime), cursor.getString(dataIdx));
                                         foundData = true;
                                     }
                                 } while (cursor.moveToNext());
                             }
 
-                            if (foundData) {
+                            if(foundData) {
                                 mContactsPromise.resolve(contactData);
                                 return;
                             } else {
@@ -141,7 +154,7 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
                             return;
                         }
                         /* No need to break as all paths return */
-                    case (EMAIL_REQUEST):
+                    case(EMAIL_REQUEST):
                         /* Return contacts first email address, as string */
                         try {
 
