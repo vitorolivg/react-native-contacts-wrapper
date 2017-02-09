@@ -101,7 +101,7 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
                             returnKeys.put(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE, "phone");
                             returnKeys.put(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE, "email");
                             // Requesting contact photo
-                            returnKeys.put(ContactsContract.CommonDataKinds.Photo.PHOTO, "photo");
+                            returnKeys.put(ContactsContract.CommonDataKinds.Photo.PHOTO_THUMBNAIL_URI, "photo");
                             //First get ID
                             String id = null;
                             int idx;
@@ -129,14 +129,21 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
                             cursor = mCtx.getContentResolver().query(contactUri, projection, null, null, sortOrder);
 
                             String mime;
+                            String photo;
                             boolean foundData = false;
                             int dataIdx = cursor.getColumnIndex(ContactsContract.Contacts.Entity.DATA1);
                             int mimeIdx = cursor.getColumnIndex(ContactsContract.Contacts.Entity.MIMETYPE);
+                            int photoIdx = cursor.getColumnIndex(ContactsContract.Contacts.Entity.PHOTO_THUMBNAIL_URI);
                             if (cursor.moveToFirst()) {
                                 do {
                                     mime = cursor.getString(mimeIdx);
+                                    photo = cursor.getString(photoIdx);
                                     if(returnKeys.containsKey(mime)) {
                                         contactData.putString((String) returnKeys.get(mime), cursor.getString(dataIdx));
+                                        foundData = true;
+                                    }
+                                    if(returnKeys.containsKey(photo)) {
+                                        contactData.putString((String) returnKeys.get(photo), cursor.getString(dataIdx));
                                         foundData = true;
                                     }
                                 } while (cursor.moveToNext());
