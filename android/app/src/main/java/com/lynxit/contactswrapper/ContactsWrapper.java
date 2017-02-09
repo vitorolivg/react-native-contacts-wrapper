@@ -101,7 +101,7 @@ public class ContactsWrapper extends ReactContextBaseJavaModule implements Activ
                             returnKeys.put(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE, "phone");
                             returnKeys.put(ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE, "email");
                             // Requesting contact photo
-                            returnKeys.put(ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE, "photo");
+                            returnKeys.put(ContactsContract.CommonDataKinds.Photo.PHOTO, "photo");
                             //First get ID
                             String id = null;
                             int idx;
